@@ -5,7 +5,7 @@ from pathlib import Path
 
 app = Flask(__name__)
 
-# 데이터베이스 파일 위치
+# 데이터베이스 파일 경로
 DB_PATH = Path(__file__).resolve().parent / "todos.db"
 
 # 데이터베이스 연결
@@ -14,7 +14,7 @@ def get_db():
     conn.row_factory = sqlite3.Row
     return conn
 
-# 데이터베이스 테이블 생성
+# 테이블 생성
 def init_db():
     conn = get_db()
 
@@ -28,12 +28,12 @@ def init_db():
     conn.commit()
     conn.close()
 
-# 메인 웹페이지
+# 메인 페이지
 @app.route("/")
 def home():
     return render_template("index.html")
 
-# 할 일 목록 조회 (SELECT)
+# READ - 할 일 조회
 @app.route("/api/todos", methods=["GET"])
 def get_todos():
     conn = get_db()
@@ -44,10 +44,9 @@ def get_todos():
 
     conn.close()
 
-    todos = [dict(row) for row in rows]
-    return jsonify(todos)
+    return jsonify([dict(row) for row in rows])
 
-# 새로운 할 일 등록 (INSERT)
+# CREATE - 할 일 추가
 @app.route("/api/todos", methods=["POST"])
 def add_todo():
     data = request.get_json(silent=True) or {}
@@ -71,6 +70,53 @@ def add_todo():
         "id": todo_id,
         "title": title.strip()
     }), 201
+
+# UPDATE - 할 일 수정
+@app.route("/api/todos/<int:todo_id>", methods=["PUT"])
+def update_todo(todo_id):
+    data = request.get_json(silent=True) or {}
+    title = data.get("title", "")
+
+    if not isinstance(title, str) or not title.strip():
+        return jsonify({"error": "수정할 내용을 입력하세요"}), 400
+
+    conn = get_db()
+
+    cursor = conn.execute(
+        "UPDATE todos SET title = ? WHERE id = ?",
+        (title.strip(), todo_id)
+    )
+
+    conn.commit()
+    changed = cursor.rowcount
+    conn.close()
+
+    if changed == 0:
+        return jsonify({"error": "할 일을 찾을 수 없습니다"}), 404
+
+    return jsonify({
+        "id": todo_id,
+        "title": title.strip()
+    })
+
+# DELETE - 할 일 삭제
+@app.route("/api/todos/<int:todo_id>", methods=["DELETE"])
+def delete_todo(todo_id):
+    conn = get_db()
+
+    cursor = conn.execute(
+        "DELETE FROM todos WHERE id = ?",
+        (todo_id,)
+    )
+
+    conn.commit()
+    changed = cursor.rowcount
+    conn.close()
+
+    if changed == 0:
+        return jsonify({"error": "할 일을 찾을 수 없습니다"}), 404
+
+    return jsonify({"message": "삭제 완료"})
 
 # 데이터베이스 초기화
 init_db()
