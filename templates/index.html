@@ -12,6 +12,7 @@
 <body>
     <main class="container">
 
+        <!-- 로그인 사용자 정보 -->
         <div class="user-bar">
             <span>{{ username }}님, 환영합니다!</span>
 
@@ -22,23 +23,78 @@
             </form>
         </div>
 
-        <h1>My Todo</h1>
-        <p>나만의 할 일 관리 웹사이트</p>
+        <header class="page-header">
+            <h1>My Todo</h1>
+            <p>나만의 할 일 관리 웹사이트</p>
+        </header>
 
-        <div class="input-area">
-            <input type="text" id="todoInput"
-                   placeholder="할 일을 입력하세요">
+        <!-- 통계 -->
+        <section class="stats">
+            <div class="stat-card">
+                <strong id="totalCount">0</strong>
+                <span>전체</span>
+            </div>
+            <div class="stat-card">
+                <strong id="doneCount">0</strong>
+                <span>완료</span>
+            </div>
+            <div class="stat-card">
+                <strong id="activeCount">0</strong>
+                <span>미완료</span>
+            </div>
+        </section>
 
-            <select id="priorityInput">
-                <option value="높음">높음</option>
-                <option value="보통" selected>보통</option>
-                <option value="낮음">낮음</option>
-            </select>
+        <!-- 할 일 등록 -->
+        <section class="add-section">
+            <h2>새로운 할 일</h2>
 
-            <button onclick="addTodo()">추가</button>
-        </div>
+            <form id="todoForm" class="input-area">
+                <input type="text"
+                       id="todoInput"
+                       placeholder="할 일을 입력하세요"
+                       maxlength="200"
+                       required>
 
-        <ul id="todoList"></ul>
+                <select id="priorityInput">
+                    <option value="높음">높음</option>
+                    <option value="보통" selected>보통</option>
+                    <option value="낮음">낮음</option>
+                </select>
+
+                <button type="submit">추가</button>
+            </form>
+        </section>
+
+        <!-- 검색 / 필터 / 정렬 -->
+        <section class="list-section">
+            <h2>할 일 목록</h2>
+
+            <div class="toolbar">
+                <input type="search"
+                       id="searchInput"
+                       placeholder="할 일 검색...">
+
+                <select id="statusFilter">
+                    <option value="all">전체 보기</option>
+                    <option value="active">미완료만</option>
+                    <option value="done">완료만</option>
+                </select>
+
+                <select id="sortOrder">
+                    <option value="new">최신순</option>
+                    <option value="old">오래된순</option>
+                    <option value="priority">우선순위순</option>
+                </select>
+            </div>
+
+            <ul id="todoList"></ul>
+
+            <p id="emptyMessage"
+               class="empty-message"
+               hidden>
+                표시할 할 일이 없습니다.
+            </p>
+        </section>
     </main>
 
     <script src="{{ url_for('static', filename='script.js') }}"></script>
