@@ -3,14 +3,16 @@
 <html lang="ko">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
     <title>My Todo</title>
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
     <main class="container">
         <h1>My Todo</h1>
-        <p>할 일 관리 웹사이트</p>
+        <p>나만의 할 일 관리 웹사이트</p>
 
         <div class="input-area">
             <input type="text" id="todoInput"
@@ -21,6 +23,6 @@
         <ul id="todoList"></ul>
     </main>
 
-    <script src="script.js"></script>
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
 </body>
 </html>
