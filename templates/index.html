@@ -11,6 +11,17 @@
 </head>
 <body>
     <main class="container">
+
+        <div class="user-bar">
+            <span>{{ username }}님, 환영합니다!</span>
+
+            <form method="POST" action="/logout">
+                <button type="submit" class="logout-btn">
+                    로그아웃
+                </button>
+            </form>
+        </div>
+
         <h1>My Todo</h1>
         <p>나만의 할 일 관리 웹사이트</p>
 
